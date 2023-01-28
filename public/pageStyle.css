@@ -1,0 +1,64 @@
+body {
+    font-family: Helvetica;
+    background-color: #bcd8e8;
+    font-size: 1.3vw;
+}
+
+/* For home page */
+
+.gatePicker {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 2% 2%;
+    grid-template-areas:
+        "AND OR XOR"
+        "NAND NOR XNOR";
+    margin: 2%;
+    height: 50vh;
+    width: 100%;
+}
+
+.gateChoice {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#AND {
+    grid-area: AND;
+}
+
+#OR {
+    grid-area: OR;
+}
+
+#XOR {
+    grid-area: XOR;
+}
+
+#NAND {
+    grid-area: NAND;
+}
+
+#NOR {
+    grid-area: NOR;
+}
+
+#XNOR {
+    grid-area: XNOR;
+}
+
+.truthTable {
+    border: 1px solid black;
+    height: 80%;
+    width: 80%;
+    transform: translate(10%, 10%);
+    border-collapse: collapse;
+}
+
+.truthTable td {
+    border: 1px solid black;
+    padding: 5px;
+    text-align: center;
+}

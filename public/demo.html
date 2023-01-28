@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>AND Demo</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="cookieCheck.js"></script>
+    <script src="gameLogic.js"></script>
+    <link rel="stylesheet" href="pageStyle.css">
+    <link rel="stylesheet" href="gameStyle.css">
+    <style>
+        .mainWindow {
+            grid-template-areas:
+                "info info game"
+                "tt tt game";
+        }
+
+        #demoInfo {
+            grid-area: info;
+        }
+
+        .ttBox {
+            grid-area: tt;
+        }
+
+        .gameArea {
+            display: none;
+            grid-area: game;
+            height: 90%;
+            width: 90%;
+            transform: translate(5%, 5%);
+        }
+
+        .ttLable {
+            font: bold;
+            text-align: center;
+        }
+
+        #startDemo {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+    <script>
+        let demoPart = 0;
+        let flag1 = false;
+        let flag2 = false;
+        //on document ready check valid user
+        $(document).ready(function () {
+            //check session
+            checkSession();
+
+            //home on click go home
+            $("#home").click(function () {
+                window.location.href = "/home";
+            });
+
+            //start demo on click
+            $("#startDemo").click(function () {
+                //hide start demo button
+                $("#startDemo").hide();
+                //show demo box
+                $(".gameBox").css("display", "");
+                $(".gameBox").show();
+                //start demo
+                doDemo(demoPart);
+            });
+
+            //response on click
+            $(".response").click(function () {
+                //get response
+                let response = $(this).text();
+                //make #response text = response
+                $("#answer").text(response);
+                var answer = null;
+                if ($(this).attr("id") == "flagL") {
+                    console.log("flagL")
+                    doDemo(demoPart, true);
+                }
+                else if ($(this).attr("id") == "flagR") {
+                    console.log("flagR")
+                    doDemo(demoPart, false);
+                }
+
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <button id="home">Home</button>
+    <div class="mainWindow">
+        <div id="demoInfo">
+            <h1>AND Demo</h1>
+            <p>For this demo you will be given a set of flags and a set of responses.</p>
+            <p>For each flag you will be give a response.</p>
+            <p>This demo uses an AND logic gate</p>
+            <p>With an AND gate you must only press the black flag '🏴' if both flags show are black '🏴'</p>
+            <p>Otherwise you will press the white flag '🏳️'</p>
+            <p>Press the button below to start the demo</p>
+        </div>
+
+        <div class="ttBox">
+            <label for="truthTable" class="ttLable">Truth Table</label>
+            <table id="truthTable" class="truthTable">
+                <tr id="row0">
+                    <th>Flag 1</th>
+                    <th>Flag 2</th>
+                    <th>Response</th>
+                </tr>
+                <tr id="row1">
+                    <td>🏴</td>
+                    <td>🏴</td>
+                    <td>🏴</td>
+                </tr>
+                <tr id="row2">
+                    <td>🏴</td>
+                    <td>🏳️</td>
+                    <td>🏳️</td>
+                </tr>
+                <tr id="row3">
+                    <td>🏳️</td>
+                    <td>🏴</td>
+                    <td>🏳️</td>
+                </tr>
+                <tr id="row4">
+                    <td>🏳️</td>
+                    <td>🏳️</td>
+                    <td>🏳️</td>
+                </tr>
+            </table>
+        </div>
+
+        <button id="startDemo">Start Demo</button>
+        <div class="mainWindow">
+            <p id="gameMessages"></p>
+            <div id="demoBox" class="gameArea">
+                <div id="flag1" class="inputL flag"></div>
+                <div id="flag2" class="inputR flag"></div>
+                <div id="answer" class="output flag"></div>
+                <div id="flagL" class="response responseL flag">🏴</div>
+                <div id="flagR" class="response responseR flag">🏳️</div>
+            </div>
+        </div>
+
+
+</body>
+
+</html>

@@ -1,0 +1,36 @@
+{"functionCalled":"signin","message":"User not found, failed to sign in","time":1672443622862,"_id":"1i7yo07sE4jBWJ8L"}
+{"username":"Fred","animal":"dog","functionCalled":"signin","message":"User signed in","time":1672658234735,"_id":"1kP0JCol9TTSkfbx"}
+{"username":"Fred","animal":"dog","functionCalled":"signup","message":"User signed up","time":1672359465066,"_id":"1o90K4vbpmPa84X3"}
+{"username":"Fred","animal":"lizard","functionCalled":"signup","message":"User already exists, failed to sign up","time":1673964033078,"_id":"4XclYHQwe250tVzG"}
+{"username":"Fred","animal":"dog","functionCalled":"signin","message":"User signed in","time":1674126104136,"_id":"54Qah0KgCFV70YlU"}
+{"username":"Fred","animal":"dog","functionCalled":"signin","message":"User not found, failed to sign in","time":1672359463273,"_id":"5a5uVL8ZEk1Jx7ER"}
+{"username":"Fred","animal":"dog","functionCalled":"signin","message":"User signed in","time":1672748558425,"_id":"6xHsGzoO3ZLtD4e8"}
+{"functionCalled":"signin","message":"User not found, failed to sign in","time":1672444002095,"_id":"7wJgLjy9OO1UbGuE"}
+{"functionCalled":"signin","message":"User not found, failed to sign in","time":1672443838073,"_id":"Ay7LNgzwzyKwChxn"}
+{"functionCalled":"signin","message":"User not found, failed to sign in","time":1672443865871,"_id":"BF8EovmQDum7qsgQ"}
+{"functionCalled":"signin","message":"User not found, failed to sign in","time":1672444028853,"_id":"C049u2womsx7mygT"}
+{"username":"Fred","animal":"dog","functionCalled":"signin","message":"User signed in","time":1672920749600,"_id":"DrlsutCLaeZ2ZVO8"}
+{"username":"Fred","animal":"deer","functionCalled":"signin","message":"User not found, failed to sign in","time":1674135816948,"_id":"GZ06wfwONTMhOKjC"}
+{"username":"Fred","animal":"dog","functionCalled":"signin","message":"User signed in","time":1673030333406,"_id":"GkHiKGWpj4nUB3LM"}
+{"functionCalled":"signin","message":"User not found, failed to sign in","time":1672444324142,"_id":"GtQa3ERy3EyyW3nJ"}
+{"username":"Fred","animal":"dog","functionCalled":"signin","message":"User signed in","time":1672656562471,"_id":"IEr5gKxTA3dsOgdO"}
+{"username":"Username","animal":"giraffe","functionCalled":"signup","message":"User signed up","time":1674135848416,"_id":"Kqym8O58DWSbckVa"}
+{"functionCalled":"signin","message":"User not found, failed to sign in","time":1672443760411,"_id":"LtYeKyNJN5qOdTFb"}
+{"username":"Fred","animal":"dog","functionCalled":"signin","message":"User signed in","time":1672738845782,"_id":"PRaf1FSX9QRTlnNY"}
+{"username":"Fred","animal":"dog","functionCalled":"signin","message":"User signed in","time":1672359774313,"_id":"QcUINnKfn8B5eJXa"}
+{"username":"Fred","animal":"dog","functionCalled":"signin","message":"User signed in","time":1672747934604,"_id":"SDDwvomvdGGuyKTM"}
+{"username":"Fred","animal":"lizard","functionCalled":"signin","message":"User not found, failed to sign in","time":1673964030947,"_id":"VG0cu1IEgNy9Gd27"}
+{"functionCalled":"signin","message":"User not found, failed to sign in","time":1672443813558,"_id":"VtTH1in40HoJxxhN"}
+{"username":"Fred","animal":"dog","functionCalled":"signin","message":"User signed in","time":1673964138402,"_id":"ZTAzMx15uny5XIWs"}
+{"functionCalled":"signin","message":"User not found, failed to sign in","time":1672443828371,"_id":"blnoFoTzZOI7RErn"}
+{"username":"Fred","animal":"dog","functionCalled":"signin","message":"User signed in","time":1673137377705,"_id":"bzacueZH9d3kTATb"}
+{"username":"Fred","animal":"dog","functionCalled":"signin","message":"User signed in","time":1673008180817,"_id":"d3EQU2T0vEAZvMKr"}
+{"functionCalled":"signin","message":"User not found, failed to sign in","time":1672444166055,"_id":"dIzZArkedL0CG5i5"}
+{"username":"Fred","animal":"dog","functionCalled":"signin","message":"User signed in","time":1672748487611,"_id":"f5jSiKQqL1PpYmeE"}
+{"username":"Fred","animal":"dog","functionCalled":"signin","message":"User signed in","time":1672612098168,"_id":"gcghG9z5MY3R6CPJ"}
+{"username":"Fred","animal":"dog","functionCalled":"signin","message":"User signed in","time":1674486937907,"_id":"jcHS1095r7hF8ed0"}
+{"username":"Fred","animal":"dog","functionCalled":"signin","message":"User signed in","time":1673964024692,"_id":"k9kO2HSeCKOIdxs5"}
+{"username":"Fred","animal":"deer","functionCalled":"signup","message":"User already exists, failed to sign up","time":1674135823959,"_id":"lzBWjIloKgPGJxdW"}
+{"username":"Fred","animal":"dog","functionCalled":"signin","message":"User signed in","time":1673001321771,"_id":"uG77zF7otRafKOGW"}
+{"username":"Fred","animal":"dog","functionCalled":"signin","message":"User signed in","time":1673968770013,"_id":"uLUURRePXNjQzHCD"}
+{"username":"Fred","animal":"dog","functionCalled":"signin","message":"User signed in","time":1672444437714,"_id":"vUDBrlOrKyivgLz9"}

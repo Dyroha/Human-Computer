@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <link rel="stylesheet" href="pageStyle.css">
+    <link rel="stylesheet" href="gameStyle.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="gameLogic.js"></script>
+    <script src="cookieCheck.js"></script>
+    <script>
+        var startTime;
+        var gameID;
+
+        $(document).ready(function () {
+            //check session
+            checkSession();
+
+            //home on click go home
+            $("#home").click(function () {
+                window.location.href = "/home";
+            });
+
+            //set title to game type
+            //get gate from url
+            var gate = window.location.href.split("?")[1];
+            document.title = "Level: " + gate;
+
+            //get gate info from file
+            $.get("/gateInfo/" + gate + "info.html", function (data) {
+                $("#gameInfo").html(data);
+            }, 'html');
+
+            //when start button is clicked
+            $("#start").click(function () {
+                //hide start button
+                $("#start").hide();
+                //show game area
+                $(".gameArea").css("display", "grid");
+                //start game
+                startRound(gate);
+            });
+
+            //when flag is clicked send answer
+            $(".response").click(function () {
+                //make sure the user can't click on the flags
+                $("#flagL").removeClass("response");
+                $("#flagR").removeClass("response");
+                //get answer
+                var answer = $(this).attr("data-value") == "true" ? true : false;
+                //send answer
+                sendAnswer(startTime, gameID, answer);
+            });
+
+
+        });
+    </script>
+    <style>
+        .mainWindow {
+            grid-template-areas:
+                "info game game"
+                "info game game";
+            height: 95vh;
+        }
+
+        .gameArea {
+            grid-area: game;
+            height: 90%;
+            width: 90%;
+            transform: translate(5%, 5%);
+        }
+
+        #gameInfo {
+            grid-area: info;
+        }
+
+        .gameArea {
+            display: none;
+        }
+
+        .startButton {
+            position: absolute;
+            top: 50%;
+            left: 60%;
+            transform: translate(-50%, -50%);
+            font-size: 2em;
+            width: 4em;
+        }
+    </style>
+</head>
+
+<body>
+    <button id="start" class="startButton">Start</button>
+    <div id="header">
+        <button id="home">Home</button>
+    </div>
+    <div class="mainWindow">
+        <div id="gameInfo"></div>
+        <div class="messages"></div>
+        <div class="gameArea">
+            <div id="flag1" class="inputL flag"></div>
+            <div id="flag2" class="inputR flag"></div>
+            <div id="answer" class="output flag"></div>
+            <div id="flagL" class="response responseL flag" data-value="true">🏴</div>
+            <div id="flagR" class="response responseR flag" data-value="false">🏳️</div>
+        </div>
+    </div>
+</body>
+
+</html>

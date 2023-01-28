@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>The Human Computer</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="cookieCheck.js"></script>
+    <script>
+        //function to get value from input
+        function getValue(id) {
+            return $("#" + id).val();
+        }
+
+        $(document).ready(function () {
+            //check if cookie exists
+            var cookiesPresent = cookiePresent("sessionID");
+            if (cookiesPresent) {
+                //redirect to home page
+                window.location.href = "/home";
+            }
+            //delete cookies if still here
+            deleteAllCookies();
+
+            const animals = ["dog", "cat", "bird", "fish", "rabbit", "hamster", "turtle", "snake", "lizard", "frog", "spider", "mouse", "horse", "cow", "pig", "chicken", "sheep", "goat", "duck", "deer", "elephant", "giraffe", "kangaroo", "monkey", "panda", "penguin", "squirrel", "tiger", "wolf", "zebra"];
+            //put animals in select element in random order
+            for (var i = 0; i < animals.length; i++) {
+                var randomIndex = Math.floor(Math.random() * animals.length);
+                var temp = animals[i];
+                animals[i] = animals[randomIndex];
+                animals[randomIndex] = temp;
+            }
+            for (var i = 0; i < animals.length; i++) {
+                $("#animal").append("<option value='" + animals[i] + "'>" + animals[i] + "</option>");
+            }
+
+            //post signin button go to signin page
+            $("#signIn").click(function () {
+                var username = getValue("username");
+                var animal = getValue("animal");
+                $.post("/signin", { username: username, animal: animal },
+                    function (data) {
+                        //if status = success start session
+                        if (data.status == "success") {
+                            //set cookies
+                            setCookie("sessionID", data.sessionID);
+                            setCookie("username", username);
+                            setCookie("demo", data.demoFinished);
+                            //redirect to home page
+                            window.location.href = "/home";
+                        }
+                        //if status = error display error
+                        else {
+                            alert(data.message);
+                        }
+                    },
+                    "json"
+                );
+            });
+
+            //post signup button go to signup page
+            $("#signUp").click(function () {
+                var username = $("#username").val();
+                var animal = $("#animal").val();
+
+                $.post("/signup", { username: username, animal: animal },
+                    function (data) {
+                        //if status = success go to home with new account
+                        if (data.status == "success") {
+                            //set cookies
+                            setCookie("sessionID", data.sessionID);
+                            setCookie("username", username);
+                            setCookie("demo", "false");
+                            //redirect to home page
+                            window.location.href = "/home?newAccount";
+                        } else {
+                            alert(data.message);
+                        }
+                    },
+                    "json"
+                );
+            });
+        });
+    </script>
+    <style>
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: 1fr 1fr 1fr;
+            gap: 0px 0px;
+            grid-auto-flow: row;
+            grid-template-areas:
+                ". info ."
+                ". contentBox ."
+                ". . extra";
+            height: 100vh;
+            min-height: 100vh;
+        }
+
+        .contentBox {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+            gap: 0px 0px;
+            grid-auto-flow: row;
+            grid-template-areas:
+                "usernameLabel usernameLabel usernameLabel"
+                "usernameInput usernameInput usernameInput"
+                "animalLabel animalLabel animalLabel"
+                "animalInput animalInput animalInput"
+                "signIn . signUp";
+            grid-area: contentBox;
+        }
+
+        .usernameLabel {
+            grid-area: usernameLabel;
+        }
+
+        .usernameInput {
+            grid-area: usernameInput;
+        }
+
+        .animalLabel {
+            grid-area: animalLabel;
+        }
+
+        .animalInput {
+            grid-area: animalInput;
+        }
+
+        .signIn {
+            grid-area: signIn;
+        }
+
+        .signUp {
+            grid-area: signUp;
+        }
+
+        .info {
+            grid-area: info;
+        }
+
+        .extra {
+            grid-area: extra;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="info"></div>
+        <div class="contentBox">
+            <h2 class="usernameLabel">Username (do not use any information about yourself):</h2>
+            <input class="usernameInput" type="text" id="username" name="username"><br><br>
+            <h2 class="animalLabel">Animal:</h2>
+            <select class="animalInput" name="animal" id="animal"></select><br><br>
+            <input class="signIn" type="submit" id="signIn" value="Sign In">
+            <input class="signUp" type="submit" id="signUp" value="Sign Up">
+        </div>
+        <div class="extra"></div>
+    </div>
+
+</body>
+
+</html>

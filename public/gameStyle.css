@@ -1,0 +1,49 @@
+.mainWindow {
+    background-color: antiquewhite;
+    display: grid;
+    width: 100%;
+    height: 100%;
+    grid-template-columns: 1fr 0.2fr 1.9fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 0px 0px;
+}
+
+.gameArea {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    border: 1px solid #000;
+    padding: 10px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+}
+
+.flag {
+    text-align: center;
+    font-size: 4em;
+}
+
+.response:hover {
+    background-color: lightgrey;
+}
+.inputL {
+    grid-column: 1;
+    grid-row: 1;
+}
+.inputR {
+    grid-column: 2;
+    grid-row: 1;
+}
+.output {
+    grid-column: 1 / span 2;
+    grid-row: 2;
+}
+.responseL {
+    grid-column: 1;
+    grid-row: 3;
+}
+.responseR {
+    grid-column: 2;
+    grid-row: 3;
+}

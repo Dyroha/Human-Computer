@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="cookieCheck.js"></script>
+    <link rel="stylesheet" href="pageStyle.css">
+    <script>
+        //on document ready set title to Welcome username
+        $(document).ready(function () {
+            //check if cookies exists
+            checkSession();
+            //set title to Welcome username
+            $("#title").html("Welcome " + getCookieValue("username"));
+            //if user has not completed demo
+            if (getCookieValue("demo") == "false") {
+                //get info message from info.html with line spacing
+                $.get("/info.html", function (data) {
+                    $("#info").html(data);
+                    //demo on click go to demo
+                    $("#demo").click(function () {
+                        window.location.href = "/demo";
+                    });
+                }, 'html');
+            } else {
+                //append demo to the menu
+                $("#menu").append("<button id='demo'>Demo</button>");
+                //demo on click go to demo
+                $("#demo").click(function () {
+                    window.location.href = "/demo";
+                });
+            }
+
+            //end session on sign out and redirect to /
+            $("#logOut").click(function () {
+                logOut()
+            });
+
+            //on gate choice go to gate
+            $(".gateChoice").click(function () {
+                window.location.href = "/game?" + $(this).attr("id");
+            });
+        });
+
+    </script>
+</head>
+
+<body>
+    <div id="menu">
+        <button id="logOut">Log Out</button>
+    </div>
+    <div id="info"></div>
+    <div class="gatePicker">
+        <button id="AND" class="gateChoice">AND</button>
+        <button id="OR" class="gateChoice">OR</button>
+        <button id="XOR" class="gateChoice">XOR</button>
+        <button id="NAND" class="gateChoice">NAND</button>
+        <button id="NOR" class="gateChoice">NOR</button>
+        <button id="XNOR" class="gateChoice">XNOR</button>
+    </div>
+
+</body>
+
+</html>
