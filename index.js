@@ -262,160 +262,47 @@ app.post("/demoFinished", async (request, response) => {
     });
 });
 
-function createGameID() {
-    var gameID = "";
-    var possible =
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-    for (var i = 0; i < 5; i++)
-        gameID += possible.charAt(Math.floor(Math.random() * possible.length));
-
-    return gameID;
-}
-
-app.post("/game", (request, response) => {
+app.post("/sendgame", async (request, response) => {
     const data = request.body;
     console.log(data);
     //for the user
-    var sessionID = data.sessionID;
+    const username = data.username;
+    const sessionID = data.sessionID;
 
-    //for the game if not started yet
-    var gate = data.gate;
-
-    //for the game if started
-    var gameID = data.gameID;
-    var answer = data.answer;
-    var duration = data.duration;
-    // check session
-    checkSession(sessionID).then((result) => {
-        if (result) {
-            //get user from database using session id
-            let username = result.username;
-            let animal = result.animal;
-            const userGames = new Datastore(
-                "userGames/" + username + animal + ".db"
-            );
-            userGames.loadDatabase();
-            var gameRound;
-            if (gameID == "" || gameID == undefined) {
-                //start game
-                //generate random game id
-                let gameID = createGameID();
-
-                //generate random flags
-                let flagsin = getFlags(Math.floor(Math.random() * 4));
-
-                gameRound = {
-                    gameID: gameID,
-                    gate: gate,
-                    flag1: flagsin[0],
-                    flag2: flagsin[1],
-                    rightAnswer: getCorrect(gate, flagsin[0], flagsin[1]),
-                    userAnswer: null,
-                    correct: null,
-                    duration: null,
-                    date: null,
-                };
-
-                //insert game into user database
-                userGames.insert(gameRound);
-
-                //send game id and flags to user
-                response.json({
-                    status: "start game",
-                    gameID: gameID,
-                    flag1: flagsin[0],
-                    flag2: flagsin[1],
-                });
-            } else {
-                //check answer
-                userGames.find({ gameID: gameID }, (err, docs) => {
-                    if (docs.length > 0) {
-                        gameRound = docs[0];
-                        //update game round (answers are stored as booleans)
-                        gameRound.userAnswer = answer;
-                        gameRound.correct = answer === gameRound.rightAnswer;
-                        gameRound.duration = duration;
-                        gameRound.date = Date.now();
-                        const gameUpdate = (err, numReplaced) => {
-                            if (err) {
-                                response.json({
-                                    status: "error",
-                                    message: err,
-                                });
-                            } else {
-                                //get new flags, make suer they are not the same as the old ones
-                                var flagsin = getFlags(
-                                    Math.floor(Math.random() * 4)
-                                );
-                                while (
-                                    flagsin[0] == gameRound.flag1 &&
-                                    flagsin[1] == gameRound.flag2
-                                ) {
-                                    flagsin = getFlags(
-                                        Math.floor(Math.random() * 4)
-                                    );
-                                }
-                                var newGameID = createGameID();
-                                //create new game round
-                                let newGameRound = {
-                                    gameID: newGameID,
-                                    gate: gate,
-                                    flag1: flagsin[0],
-                                    flag2: flagsin[1],
-                                    rightAnswer: getCorrect(
-                                        gate,
-                                        flagsin[0],
-                                        flagsin[1]
-                                    ),
-                                    userAnswer: null,
-                                    correct: null,
-                                    duration: null,
-                                };
-
-                                //insert game into user database
-                                userGames.insert(newGameRound);
-
-                                var status = gameRound.correct
-                                    ? "correct"
-                                    : "incorrect";
-
-                                //send new flags to user
-                                response.json({
-                                    status: status,
-                                    gameID: newGameID,
-                                    flag1: flagsin[0],
-                                    flag2: flagsin[1],
-                                });
-                            }
-                        };
-                        userGames.update(
-                            { gameID: gameID },
-                            gameRound,
-                            {},
-                            gameUpdate
-                        );
-                    }
-                });
-            }
-        } else {
-            response.json({ status: "error", message: "Invalid session" });
+    //check session
+    let sessionValid = checkSession(sessionID);
+    //if session valid...
+    if (sessionValid) {
+        //get game data, {gate: input: userResponse: duration: time:}
+        let game = JSON.parse(data.game);
+        //add correct if user input is correct or not
+        game.correct =
+            getCorrect(game.gate, game.input[0], game.input[1]) ==
+            game.userResponse;
+        //add dateTime now
+        game.time = Date.now();
+        //send to database for that user
+        //get/create collection
+        let usergames = db.collection(username + "Games");
+        try {
+            await usergames.insertOne(game);
+            response.json({
+                status: "success",
+                message: "game compleated",
+            });
+        } catch (error) {
+            logEvent(username, "sendgame", "Failed to add game to database");
+            response.json({
+                status: "error",
+                message:
+                    "something when wrong when adding the game to the database, contact the admin",
+            });
         }
-    });
-});
-
-function getInputs(number) {
-    inputs = [];
-    for (let i = 0; i < number; i++) {
-        let flagsin = getFlags(Math.floor(Math.random() * 4));
-        if (i == 0) {
-            inputs[0] = flagsin;
-        } else {
-            while (inputs[i - 1] == flagsin) {
-                flagsin = getFlags(Math.floor(Math.random() * 4));
-            }
-            inputs[i] = flagsin;
-        }
+    } else {
+        //error response
+        response.json({
+            status: "error",
+            message: "session has ended, reload the page to login again",
+        });
     }
-    return inputs;
-}
+});

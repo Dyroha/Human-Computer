@@ -12,6 +12,8 @@
         $(document).ready(function () {
             //check if cookies exists
             checkSession();
+            //TODO: update gate buttons to show current number of times done (back and front) 
+
             //set title to Welcome username
             $(document).attr("title", "Welcome " + getCookieValue("username"));
             //if user has not completed demo

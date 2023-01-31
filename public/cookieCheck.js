@@ -26,9 +26,9 @@ function getCookieValue(cookieName) {
 
 //set cookie values
 function setCookie(cookieName, cookieValue, duration = null) {
-    var cookie = cookieName + "=" + cookieValue;
+    let cookie = cookieName + "=" + cookieValue;
     if (duration) {
-        var date = new Date();
+        let date = new Date();
         date.setTime(date.getTime() + duration);
         cookie += "; expires=" + date.toUTCString();
     }
@@ -38,11 +38,6 @@ function setCookie(cookieName, cookieValue, duration = null) {
 
 //check if session is valid
 function checkSession() {
-    //create loading p
-    let loading = document.createElement("p");
-    loading.innerHTML = "Loading...";
-    document.body.appendChild(loading);
-
     let sessionID = getCookieValue("sessionID");
     //ajax call to check session syncronously
     $.ajax({
@@ -59,7 +54,6 @@ function checkSession() {
         },
         dataType: "json",
     });
-    document.body.removeChild(loading);
 }
 
 //logOut function that ends session and redirects to /

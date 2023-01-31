@@ -35,7 +35,8 @@ function doDemo(part, answer = null) {
                     if (data.status == "success") {
                         console.log("Demo completed and logged");
                     }
-                }
+                },
+                "json"
             );
             document.cookie = "demo=true";
             return;
@@ -53,72 +54,30 @@ function doDemo(part, answer = null) {
     return part;
 }
 
-//game logic
-function startRound(gate) {
-    //get session id
-    var sessionID = getCookieValue("sessionID");
-    var package = {
-        sessionID: sessionID,
-        gate: gate,
+function generateGame() {
+    //get random input
+    let flag1 = Math.random() < 0.5 ? true : false;
+    let flag2 = Math.random() < 0.5 ? true : false;
+
+    return {
+        input: [flag1, flag2],
+        duration: Date.now(),
     };
-    $.post(
-        "/game",
-        package,
-        (data) => {
-            console.log(data.status);
-            if (data.status == "start game") {
-                flag1 = data.flag1;
-                flag2 = data.flag2;
-                gameID = data.gameID;
-                $("#flag1").text(boolToFlag(flag1));
-                $("#flag2").text(boolToFlag(flag2));
-                startTime = new Date().getTime();
-            } else {
-                alert("Error: " + data.status);
-            }
-        },
-        "json"
-    );
 }
 
-function sendAnswer(startTime, currentGameID, answer) {
-    //remove input flags
-    $("#flag1").text("");
-    $("#flag2").text("");
-
-    let sessionID = getCookieValue("sessionID");
-    let endTime = new Date().getTime();
-    let duration = endTime - startTime;
+async function postGameResult(game) {
     let package = {
-        sessionID: sessionID,
-        gameID: currentGameID,
-        answer: answer,
-        duration: duration,
+        username: getCookieValue("username"),
+        sessionID: getCookieValue("sessionID"),
+        game: JSON.stringify(game),
     };
     console.log(package);
     $.post(
-        "/game",
+        "/sendgame",
         package,
         (data) => {
-            if (data.status == "correct" || data.status == "incorrect") {
-                //wait 2 seconds
-                setTimeout(() => {
-                    flag1 = data.flag1;
-                    flag2 = data.flag2;
-                    gameID = data.gameID;
-                    $("#flag1").text(boolToFlag(flag1));
-                    $("#flag2").text(boolToFlag(flag2));
-                    //make sure the user can click on the flags
-                    $("#flagL").addClass("response");
-                    $("#flagR").addClass("response");
-                    time = new Date().getTime();
-                }, 2000);
-            } else if (data.status == "end game") {
-                endGame();
-            } else {
-                alert("Error: " + data.status);
-            }
+            return (data.status = "success");
         },
-        "json"
+        "application/json"
     );
 }
