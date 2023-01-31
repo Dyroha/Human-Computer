@@ -26,7 +26,7 @@ function doDemo(part, answer = null) {
                     "It will not highlight the Truth Table or tell you if you are correct or not</br>" +
                     "Once you have completed the first 5 attempts the truth table will only be able to be viewed by hovering the box saying Truth Table</br></br>" +
                     "If you ever need a refresher you can repeat the demo at by clicking the demo button at the top of the home page</br></br>" +
-                    "You can now go back to the home menu to do the puzzles :)"
+                    "You can now go back to the home menu to do the puzzles :) (button at the top left of the page)"
             );
             $.post(
                 "/demofinished",
@@ -37,6 +37,7 @@ function doDemo(part, answer = null) {
                     }
                 }
             );
+            document.cookie = "demo=true";
             return;
         } else {
             part += 1;
@@ -50,21 +51,6 @@ function doDemo(part, answer = null) {
     // highlight row of truthTable that corresponds to demoPart
     $("#row" + (part + 1)).css("background-color", "yellow");
     return part;
-}
-
-function endDemo() {
-    //remove .response:hover from #flagL and #flagR
-    $("#flagL").removeClass("response");
-    $("#flagR").removeClass("response");
-    //update demo cookie to true
-    document.cookie = "demo=true";
-    //wait 2 seconds
-    setTimeout(() => {
-        $("#demoBox").hide();
-        $("#gameMessages").html(
-            "You have completed the demo!<br><br>You may now play the game.<br><br>Go back to the home page to start playing."
-        );
-    }, 2000);
 }
 
 //game logic
