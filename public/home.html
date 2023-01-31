@@ -12,8 +12,6 @@
         $(document).ready(function () {
             //check if cookies exists
             checkSession();
-            //TODO: update gate buttons to show current number of times done (back and front) 
-
             //set title to Welcome username
             $(document).attr("title", "Welcome " + getCookieValue("username"));
             //if user has not completed demo
@@ -44,6 +42,15 @@
             $(".gateChoice").click(function () {
                 window.location.href = "/game?" + $(this).attr("id");
             });
+
+            //add gateCounts to buttons
+            console.log(getCookieValue("ANDCount"));
+            $("#AND").html("AND</br>" + getCookieValue("AND") + "/20");
+            $("#OR").html("OR</br>" + getCookieValue("OR") + "/20");
+            $("#XOR").html("XOR</br>" + getCookieValue("XOR") + "/20");
+            $("#NAND").html("NAND</br>" + getCookieValue("NAND") + "/20");
+            $("#NOR").html("NOR</br>" + getCookieValue("NOR") + "/20");
+            $("#XNOR").html("XNOR</br>" + getCookieValue("XNOR") + "/20");
         });
 
     </script>

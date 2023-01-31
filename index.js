@@ -203,6 +203,7 @@ app.post("/signin", async (request, response) => {
             message: "Successfully signed in",
             sessionID: sessionID,
             demoFinished: foundUser.demoFinished,
+            gateCount: foundUser.gateCount,
         });
     }
 });
@@ -218,7 +219,7 @@ app.post("/signup", async (request, response) => {
     });
 
     if (!foundUser) {
-        collections.users.insertOne({
+        let newUser = {
             username: username,
             animal: animal,
             demoFinished: false,
@@ -230,13 +231,15 @@ app.post("/signup", async (request, response) => {
                 NOR: 0,
                 XNOR: 0,
             },
-        });
+        };
+        collections.users.insertOne(newUser);
         let sessionID = await createSession(username);
         logEvent(username, "signup", "User signed up");
         response.json({
             status: "success",
             message: "Successfully signed up",
             sessionID: sessionID,
+            gateCount: newUser.gateCount,
         });
     } else {
         response.json({
@@ -264,7 +267,6 @@ app.post("/demoFinished", async (request, response) => {
 
 app.post("/sendgame", async (request, response) => {
     const data = request.body;
-    console.log(data);
     //for the user
     const username = data.username;
     const sessionID = data.sessionID;

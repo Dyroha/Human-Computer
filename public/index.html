@@ -47,6 +47,9 @@
                             setCookie("sessionID", data.sessionID);
                             setCookie("username", username);
                             setCookie("demo", data.demoFinished);
+                            for (const [key, value] of Object.entries(data.gateCount)) {
+                                setCookie(key, value);
+                            }
                             //redirect to home page
                             window.location.href = "/home";
                         }
@@ -72,8 +75,11 @@
                             setCookie("sessionID", data.sessionID);
                             setCookie("username", username);
                             setCookie("demo", "false");
+                            for (const [key, value] of Object.entries(data.gateCount)) {
+                                setCookie(key, value);
+                            }
                             //redirect to home page
-                            window.location.href = "/home?newAccount";
+                            window.location.href = "/home";
                         } else {
                             alert(data.message);
                         }
