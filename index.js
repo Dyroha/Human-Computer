@@ -199,7 +199,6 @@ app.post("/signin", async (request, response) => {
         });
     } else {
         var sessionID = await createSession(username);
-        logEvent(username, "signin", "User signed in");
         response.json({
             status: "success",
             message: "Successfully signed in",
@@ -241,7 +240,6 @@ app.post("/signup", async (request, response) => {
             sessionID: sessionID,
         });
     } else {
-        logEvent(username, "signup", "User already exists, failed to sign up");
         response.json({
             status: "error",
             message: "User already exists, pick a different username",
