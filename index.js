@@ -119,7 +119,6 @@ async function checkSession(sessionID) {
     let session = await collections.sessions.findOne({
         sessionID: sessionID,
     });
-    console.log(session);
     return session != null;
 }
 
@@ -245,6 +244,22 @@ app.post("/signup", async (request, response) => {
             message: "User already exists, pick a different username",
         });
     }
+});
+
+app.post("/demoFinished", async (request, response) => {
+    let data = request.body;
+    let username = data.username;
+    await collections.users.updateOne(
+        { username: username },
+        {
+            $set: { demoFinished: true },
+            $currentDate: { lastModified: true },
+        }
+    );
+    response.json({
+        status: "success",
+        message: "demo has been played",
+    });
 });
 
 function createGameID() {

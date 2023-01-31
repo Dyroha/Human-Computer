@@ -12,8 +12,9 @@
     <style>
         .mainWindow {
             grid-template-areas:
-                "info info game"
-                "tt tt game";
+                "info game game"
+                "tt game game";
+            height: 95vh;
         }
 
         #demoInfo {
@@ -46,8 +47,6 @@
     </style>
     <script>
         let demoPart = 0;
-        let flag1 = false;
-        let flag2 = false;
         //on document ready check valid user
         $(document).ready(function () {
             //check session
@@ -63,28 +62,26 @@
                 //hide start demo button
                 $("#startDemo").hide();
                 //show demo box
-                $(".gameBox").css("display", "");
-                $(".gameBox").show();
+                $(".gameArea").css("display", "grid");
                 //start demo
-                doDemo(demoPart);
+                demoPart = doDemo(demoPart);
             });
 
             //response on click
             $(".response").click(function () {
+                //remove button pressability
+                $(".responseL").removeClass("response");
+                $(".responseL").removeClass("response");
                 //get response
                 let response = $(this).text();
                 //make #response text = response
                 $("#answer").text(response);
-                var answer = null;
-                if ($(this).attr("id") == "flagL") {
-                    console.log("flagL")
-                    doDemo(demoPart, true);
-                }
-                else if ($(this).attr("id") == "flagR") {
-                    console.log("flagR")
-                    doDemo(demoPart, false);
-                }
 
+                setTimeout(function () {
+                    demoPart = doDemo(demoPart, response);
+                    $(".responseL").addClass("response");
+                    $(".responseL").addClass("response");
+                }, 1000);
             });
         });
     </script>
@@ -92,6 +89,7 @@
 
 <body>
     <button id="home">Home</button>
+    <button id="startDemo">Start Demo</button>
     <div class="mainWindow">
         <div id="demoInfo">
             <h1>AND Demo</h1>
@@ -101,6 +99,8 @@
             <p>With an AND gate you must only press the black flag '🏴' if both flags show are black '🏴'</p>
             <p>Otherwise you will press the white flag '🏳️'</p>
             <p>Press the button below to start the demo</p>
+            <p>The truth table below shows what you should respond with when presented with different input flag
+                combinations</p>
         </div>
 
         <div class="ttBox">
@@ -133,18 +133,14 @@
                 </tr>
             </table>
         </div>
-
-        <button id="startDemo">Start Demo</button>
-        <div class="mainWindow">
-            <p id="gameMessages"></p>
-            <div id="demoBox" class="gameArea">
-                <div id="flag1" class="inputL flag"></div>
-                <div id="flag2" class="inputR flag"></div>
-                <div id="answer" class="output flag"></div>
-                <div id="flagL" class="response responseL flag">🏴</div>
-                <div id="flagR" class="response responseR flag">🏳️</div>
-            </div>
+        <div class="gameArea">
+            <div id="flag1" class="inputL flag"></div>
+            <div id="flag2" class="inputR flag"></div>
+            <div id="answer" class="output flag"></div>
+            <div id="flagL" class="response responseL flag" data-value="true">🏴</div>
+            <div id="flagR" class="response responseR flag" data-value="false">🏳️</div>
         </div>
+    </div>
 
 
 </body>

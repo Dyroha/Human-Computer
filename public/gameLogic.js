@@ -6,39 +6,50 @@ function boolToFlag(bool) {
     }
 }
 
+var flags = [
+    ["🏴", "🏴", "🏴"],
+    ["🏴", "🏳️", "🏳️"],
+    ["🏳️", "🏴", "🏳️"],
+    ["🏳️", "🏳️", "🏳️"],
+];
+
 function doDemo(part, answer = null) {
     console.log(part + " " + answer);
-    //get session id
-    var sessionID = getCookieValue("sessionID");
-    $.post(
-        "/demo",
-        {
-            sessionID: sessionID,
-            part: part,
-            flag1: flag1,
-            flag2: flag2,
-            answer: answer,
-        },
-        (data) => {
-            console.log(data.status);
-            if (data.status == "start demo" || data.status == "correct") {
-                flag1 = data.flag1;
-                flag2 = data.flag2;
-                $("#flag1").text(boolToFlag(flag1));
-                $("#flag2").text(boolToFlag(flag2));
-
-                $("#row" + demoPart).css("background-color", "transparent");
-                demoPart += 1;
-                // highlight row of truthTable that corresponds to demoPart
-                $("#row" + demoPart).css("background-color", "yellow");
-            } else if (data.status == "incorrect") {
-                alert("Incorrect");
-            } else {
-                endDemo();
-            }
-        },
-        "json"
-    );
+    if (answer != null) {
+        if (answer != flags[part][2]) {
+            alert("Incorrect answer, try again");
+            return part;
+        } else if (part == 3) {
+            $(".gameArea").html(
+                "Good job completing the demo</br></br>" +
+                    "The other games will tell you how to respond and give you the Truth Table for your first 5 attempts so make sure you study it carefully</br>" +
+                    "It will not highlight the Truth Table or tell you if you are correct or not</br>" +
+                    "Once you have completed the first 5 attempts the truth table will only be able to be viewed by hovering the box saying Truth Table</br></br>" +
+                    "If you ever need a refresher you can repeat the demo at by clicking the demo button at the top of the home page</br></br>" +
+                    "You can now go back to the home menu to do the puzzles :)"
+            );
+            $.post(
+                "/demofinished",
+                { username: getCookieValue("username") },
+                (data) => {
+                    if (data.status == "success") {
+                        console.log("Demo completed and logged");
+                    }
+                }
+            );
+            return;
+        } else {
+            part += 1;
+            $("#answer").text("");
+            alert("Correct answer, try the next one");
+        }
+    }
+    $("#row" + part).css("background-color", "transparent");
+    $("#flag1").text(flags[part][0]);
+    $("#flag2").text(flags[part][1]);
+    // highlight row of truthTable that corresponds to demoPart
+    $("#row" + (part + 1)).css("background-color", "yellow");
+    return part;
 }
 
 function endDemo() {
