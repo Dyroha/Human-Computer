@@ -247,62 +247,6 @@ app.post("/signup", async (request, response) => {
     }
 });
 
-app.post("/demo", (request, response) => {
-    //only uses and gate
-    const data = request.body;
-    const part = data.part;
-
-    if (part == "4") {
-        //get user from database using session id
-        const sessionID = data.sessionID;
-        sessionDatabase.find({ sessionID: sessionID }, (err, docs) => {
-            userDatabase.update(
-                { username: docs[0].username, animal: docs[0].animal },
-                { $set: { demoFinished: true } },
-                {},
-                (err, numReplaced) => {
-                    if (err) {
-                        response.json({ status: "error", message: err });
-                    } else {
-                        response.json({
-                            status: "success",
-                            message: "Successfully finished demo",
-                        });
-                    }
-                }
-            );
-        });
-    } else if (part == "0") {
-        //start demo
-        var flagsin = getFlags(parseInt(part));
-        console.log(flagsin);
-        response.json({
-            status: "start demo",
-            flag1: flagsin[0],
-            flag2: flagsin[1],
-        });
-    } else {
-        //check answer
-        const flag1 = data.flag1;
-        const flag2 = data.flag2;
-        const answer = data.answer;
-        var correct = getCorrect("AND", flag1, flag2);
-        console.log(answer + " " + correct);
-        if (answer == correct) {
-            var flagsin = getFlags(parseInt(part));
-            response.json({
-                status: "correct",
-                flag1: flagsin[0],
-                flag2: flagsin[1],
-            });
-        } else {
-            response.json({
-                status: "incorrect",
-            });
-        }
-    }
-});
-
 function createGameID() {
     var gameID = "";
     var possible =
