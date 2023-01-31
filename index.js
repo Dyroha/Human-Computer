@@ -1,5 +1,5 @@
 const express = require("express");
-const Datastore = require("nedb");
+const { MongoClient } = require("mongodb");
 const app = express();
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
@@ -9,14 +9,29 @@ app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ limit: "1mb" }));
 
-const userDatabase = new Datastore("db/users.db");
-userDatabase.loadDatabase();
+const url = process.env.HCDB;
+const client = new MongoClient(url);
 
-const sessionDatabase = new Datastore("db/sessions.db");
-sessionDatabase.loadDatabase();
+var db;
 
-const logDatabase = new Datastore("db/logs.db");
-logDatabase.loadDatabase();
+let collections = {
+    sessions: "",
+    users: "",
+    logs: "",
+};
+
+async function setupDB() {
+    await client.connect();
+    console.log("Connected");
+    db = client.db("hc-db");
+    collections.sessions = db.collection("sessions");
+    collections.users = db.collection("users");
+    collections.logs = db.collection("logs");
+    Object.freeze(collections);
+    return "Connected successfully to database server";
+}
+
+setupDB().then(console.log).catch(console.err);
 
 const simplegates = ["AND", "OR", "XOR"];
 const notgates = ["NAND", "NOR", "XNOR"];
@@ -49,27 +64,31 @@ function getCorrect(gate, flag1, flag2) {
 }
 
 //function to log events to database
-function logEvent(username, animal, functionCalled, message) {
+async function logEvent(username, functionCalled, message) {
     //get current time
-    var time = new Date().getTime();
+    let time = new Date().getTime();
     //create object to be inserted into database
-    var log = {
+    let log = {
         username: username,
-        animal: animal,
         functionCalled: functionCalled,
         message: message,
         time: time,
     };
     //insert object into database
-    logDatabase.insert(log);
+    try {
+        await collections.logs.insertOne(log);
+    } catch (error) {
+        console.log(`Error worth logging: ${error}`);
+        throw error;
+    }
 }
 
 //generate unique session id
 function generateSessionId() {
-    var sessionId = "";
-    var possible =
+    let sessionId = "";
+    let possible =
         "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    for (var i = 0; i < 10; i++) {
+    for (let i = 0; i < 10; i++) {
         sessionId += possible.charAt(
             Math.floor(Math.random() * possible.length)
         );
@@ -78,42 +97,30 @@ function generateSessionId() {
 }
 
 //create session
-function createSession(username, animal) {
-    var sessionID = generateSessionId();
-    var session = {
+async function createSession(username) {
+    let sessionID = generateSessionId();
+    let session = {
         username: username,
-        animal: animal,
         sessionID: sessionID,
-        expiration: new Date().getTime() + 3600000,
     };
-    sessionDatabase.insert(session);
-    return sessionID;
+    try {
+        await collections.sessions.insertOne(session);
+        return sessionID;
+    } catch (error) {
+        if (error instanceof MongoServerError) {
+            console.log(`Error worth logging: ${error}`);
+        }
+        throw error;
+    }
 }
 
 //check if session is valid
-function checkSession(sessionID) {
-    return new Promise((resolve, reject) => {
-        sessionDatabase.find({ sessionID: sessionID }, (err, docs) => {
-            console.log(err, docs);
-            if (err) {
-                reject(err);
-            } else {
-                if (docs.length > 0) {
-                    var session = docs[0];
-                    if (session.expiration > new Date().getTime()) {
-                        resolve({
-                            username: docs[0].username,
-                            animal: docs[0].animal,
-                        });
-                    } else {
-                        resolve(false);
-                    }
-                } else {
-                    resolve(false);
-                }
-            }
-        });
+async function checkSession(sessionID) {
+    let session = await collections.sessions.findOne({
+        sessionID: sessionID,
     });
+    console.log(session);
+    return session != null;
 }
 
 app.get("/", (request, response) => {
@@ -132,109 +139,114 @@ app.get("/game", (request, response) => {
     response.sendFile(__dirname + "/public/game.html");
 });
 
-app.post("/checkSession", (request, response) => {
+app.post("/checkSession", async (request, response) => {
     const data = request.body;
     const sessionID = data.sessionID;
-    checkSession(sessionID)
-        .then((sessionValid) => {
-            if (sessionValid) {
-                response.json({
-                    status: "success",
-                    message: "Session is valid",
-                });
-            } else {
-                response.json({
-                    status: "error",
-                    message: "Session has expired, please sign in again",
-                });
-            }
-        })
-        .catch((err) => {
-            response.json({ status: "error", message: err });
+    let sessionValid = await checkSession(sessionID);
+
+    if (sessionValid) {
+        response.json({
+            status: "success",
+            message: "Session is valid",
         });
+    } else {
+        response.json({
+            status: "error",
+            message: "Session has expired, please sign in again",
+        });
+    }
 });
 
-app.post("/logout", (request, response) => {
+app.post("/logout", async (request, response) => {
     const data = request.body;
-    const sessionID = data.sessionID;
-    sessionDatabase.remove({ sessionID: sessionID }, {}, (err, numRemoved) => {
-        if (numRemoved > 0) {
-            response.json({
-                status: "success",
-                message: "Successfully logged out",
-            });
-        } else {
-            response.json({ status: "error", message: "Failed to log out" });
-        }
+    console.log(data);
+    const username = data.username;
+    const deleteResponse = await collections.sessions.deleteMany({
+        username: username,
     });
+
+    console.log(deleteResponse);
+
+    if (deleteResponse.deletedCount > 0) {
+        response.json({
+            status: "success",
+            message: "Successfully logged out",
+        });
+    } else {
+        logEvent(username, "logout", "session did not exist when logging out");
+        response.json({
+            status: "error",
+            message: "Session does not exist logging out anyway",
+        });
+    }
 });
 
-app.post("/signin", (request, response) => {
+app.post("/signin", async (request, response) => {
     const data = request.body;
     const username = data.username;
     const animal = data.animal;
-    userDatabase.find({ username: username, animal: animal }, (err, docs) => {
-        if (docs < 1) {
-            logEvent(
-                username,
-                animal,
-                "signin",
-                "User not found, failed to sign in"
-            );
-            response.json({
-                status: "error",
-                message: "Invalid username or animal",
-            });
-        } else {
-            var sessionID = createSession(username, animal);
-            logEvent(username, animal, "signin", "User signed in");
-            response.json({
-                status: "success",
-                message: "Successfully signed in",
-                sessionID: sessionID,
-                demoFinished: docs[0].demoFinished,
-            });
-        }
+
+    const foundUser = await collections.users.findOne({
+        username: username,
+        animal: animal,
     });
+
+    if (!foundUser) {
+        //report back no user found
+        response.json({
+            status: "error",
+            message: "Invalid username or animal",
+        });
+    } else {
+        var sessionID = await createSession(username);
+        logEvent(username, "signin", "User signed in");
+        response.json({
+            status: "success",
+            message: "Successfully signed in",
+            sessionID: sessionID,
+            demoFinished: foundUser.demoFinished,
+        });
+    }
 });
 
-app.post("/signup", (request, response) => {
+app.post("/signup", async (request, response) => {
     const data = request.body;
     const username = data.username;
     const animal = data.animal;
-    userDatabase.find({ username: username }, (err, docs) => {
-        if (docs < 1) {
-            userDatabase.insert({
-                username: username,
-                animal: animal,
-                demoFinished: false,
-                noAND: 0,
-                noOR: 0,
-                noXOR: 0,
-                noNAND: 0,
-                noNOR: 0,
-                noXNOR: 0,
-            });
-            var sessionID = createSession(username, animal);
-            logEvent(username, animal, "signup", "User signed up");
-            response.json({
-                status: "success",
-                message: "Successfully signed up",
-                sessionID: sessionID,
-            });
-        } else {
-            logEvent(
-                username,
-                animal,
-                "signup",
-                "User already exists, failed to sign up"
-            );
-            response.json({
-                status: "error",
-                message: "User already exists, pick a different username",
-            });
-        }
+
+    const foundUser = await collections.users.findOne({
+        username: username,
+        animal: animal,
     });
+
+    if (!foundUser) {
+        collections.users.insertOne({
+            username: username,
+            animal: animal,
+            demoFinished: false,
+            gateCount: {
+                AND: 0,
+                OR: 0,
+                XOR: 0,
+                NAND: 0,
+                NOR: 0,
+                XNOR: 0,
+            },
+        });
+        let sessionID = await createSession(username);
+        logEvent(username, "signup", "User signed up");
+        response.json({
+            status: "success",
+            message: "Successfully signed up",
+            sessionID: sessionID,
+        });
+    } else {
+        logEvent(username, "signup", "User already exists, failed to sign up");
+        response.json({
+            status: "error",
+            message: "User already exists, pick a different username",
+        });
+    }
 });
 
 app.post("/demo", (request, response) => {

@@ -10,13 +10,8 @@ function deleteAllCookies() {
 }
 
 //if cookies are present, clear cookies and redirect to index page
-function cookiePresent(...cookieNames) {
-    for (const cookieName of cookieNames) {
-        if (document.cookie.indexOf(cookieName) < 0) {
-            return false;
-        }
-    }
-    return true;
+function cookiePresent(cookieName) {
+    return !(document.cookie.indexOf(cookieName) < 0);
 }
 
 //get specific cookie values
@@ -44,11 +39,11 @@ function setCookie(cookieName, cookieValue, duration = null) {
 //check if session is valid
 function checkSession() {
     //create loading p
-    var loading = document.createElement("p");
+    let loading = document.createElement("p");
     loading.innerHTML = "Loading...";
     document.body.appendChild(loading);
 
-    var sessionID = getCookieValue("sessionID");
+    let sessionID = getCookieValue("sessionID");
     //ajax call to check session syncronously
     $.ajax({
         url: "/checkSession",
@@ -71,7 +66,7 @@ function checkSession() {
 function logOut() {
     $.post(
         "/logOut",
-        { sessionID: getCookieValue("sessionID") },
+        { username: getCookieValue("username") },
         (response) => {
             if (response.status == "success") {
                 deleteAllCookies();

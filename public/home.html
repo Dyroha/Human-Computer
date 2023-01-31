@@ -13,7 +13,7 @@
             //check if cookies exists
             checkSession();
             //set title to Welcome username
-            $("#title").html("Welcome " + getCookieValue("username"));
+            $(document).attr("title", "Welcome " + getCookieValue("username"));
             //if user has not completed demo
             if (getCookieValue("demo") == "false") {
                 //get info message from info.html with line spacing

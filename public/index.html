@@ -13,13 +13,15 @@
 
         $(document).ready(function () {
             //check if cookie exists
-            var cookiesPresent = cookiePresent("sessionID");
+            let cookiesPresent = cookiePresent("sessionID");
             if (cookiesPresent) {
                 //redirect to home page
                 window.location.href = "/home";
+            } else {
+                //delete cookies if still here
+                deleteAllCookies();
             }
-            //delete cookies if still here
-            deleteAllCookies();
+
 
             const animals = ["dog", "cat", "bird", "fish", "rabbit", "hamster", "turtle", "snake", "lizard", "frog", "spider", "mouse", "horse", "cow", "pig", "chicken", "sheep", "goat", "duck", "deer", "elephant", "giraffe", "kangaroo", "monkey", "panda", "penguin", "squirrel", "tiger", "wolf", "zebra"];
             //put animals in select element in random order
