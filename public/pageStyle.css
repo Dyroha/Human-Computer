@@ -17,6 +17,7 @@ body {
     margin: 2%;
     height: 50vh;
     width: 100%;
+    transform: translate(-2%, 0);
 }
 
 .gateChoice {
