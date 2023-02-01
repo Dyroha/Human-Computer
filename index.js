@@ -158,13 +158,10 @@ app.post("/checkSession", async (request, response) => {
 
 app.post("/logout", async (request, response) => {
     const data = request.body;
-    console.log(data);
     const username = data.username;
     const deleteResponse = await collections.sessions.deleteMany({
         username: username,
     });
-
-    console.log(deleteResponse);
 
     if (deleteResponse.deletedCount > 0) {
         response.json({
@@ -300,6 +297,13 @@ app.post("/sendgame", async (request, response) => {
                     "something when wrong when adding the game to the database, contact the admin",
             });
         }
+
+        //increment games done of this type for user in users collection
+        let gateUpdateStr = "gateCount." + game.gate;
+        collections.users.updateOne(
+            { username: username },
+            { $inc: { [gateUpdateStr]: 1 } }
+        );
     } else {
         //error response
         response.json({
