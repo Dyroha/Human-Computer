@@ -16,12 +16,9 @@ function cookiePresent(cookieName) {
 
 //get specific cookie values
 function getCookieValue(cookieName) {
-    var cookieSplit = document.cookie.split(";");
-    for (var i = 0; i < cookieSplit.length; i++) {
-        if (cookieSplit[i].indexOf(cookieName) >= 0) {
-            return cookieSplit[i].split("=")[1];
-        }
-    }
+    let value = "; " + document.cookie;
+    let parts = value.split("; " + cookieName + "=");
+    if (parts.length == 2) return parts.pop().split(";").shift();
 }
 
 //set cookie values
