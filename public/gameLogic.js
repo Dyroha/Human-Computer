@@ -71,6 +71,9 @@ async function postGameResult(game) {
         sessionID: getCookieValue("sessionID"),
         game: JSON.stringify(game),
     };
+    //increment cookie for the gate
+    let gateupdate = parseInt(getCookieValue(game.gate)) + 1;
+    setCookie(game.gate, gateupdate);
     console.log(package);
     $.post(
         "/sendgame",
