@@ -75,7 +75,7 @@
                 //get response
                 let response = $(this).text();
                 //make #response text = response
-                $("#answer").text(response);
+                $("#answer").html("<p style='font-size:0.5em;'>Response:</p>" + response);
 
                 setTimeout(function () {
                     demoPart = doDemo(demoPart, response);
@@ -134,9 +134,11 @@
             </table>
         </div>
         <div class="gameArea">
-            <div id="flag1" class="inputL flag"></div>
-            <div id="flag2" class="inputR flag"></div>
-            <div id="answer" class="output flag"></div>
+            <div id="flag1" class="inputL flag">Flag1</div>
+            <div id="flag2" class="inputR flag">Flag2</div>
+            <div id="answer" class="output flag">
+                <p style='font-size:0.5em;'>Response:</p>
+            </div>
             <div id="flagL" class="response responseL flag" data-value="true">🏴</div>
             <div id="flagR" class="response responseR flag" data-value="false">🏳️</div>
         </div>

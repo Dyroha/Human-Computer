@@ -20,6 +20,7 @@ function doDemo(part, answer = null) {
             alert("Incorrect answer, try again");
             return part;
         } else if (part == 3) {
+            $(".gameArea").css("background-color", "transparent");
             $(".gameArea").html(
                 "Good job completing the demo</br></br>" +
                     "The other games will tell you how to respond and give you the Truth Table for your first 5 attempts so make sure you study it carefully</br>" +
@@ -42,13 +43,13 @@ function doDemo(part, answer = null) {
             return;
         } else {
             part += 1;
-            $("#answer").text("");
+            $("#answer").html("<p style='font-size:0.5em;'>Response:</p>");
             alert("Correct answer, try the next one");
         }
     }
     $("#row" + part).css("background-color", "transparent");
-    $("#flag1").text(flags[part][0]);
-    $("#flag2").text(flags[part][1]);
+    $("#flag1").html("<p style='font-size:0.5em;'>Flag1:</p>" + flags[part][0]);
+    $("#flag2").html("<p style='font-size:0.5em;'>Flag2:</p>" + flags[part][1]);
     // highlight row of truthTable that corresponds to demoPart
     $("#row" + (part + 1)).css("background-color", "yellow");
     return part;
