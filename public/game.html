@@ -71,7 +71,7 @@
                 }
 
                 //if "SPECIFIC_GATE" cookie gas gotten > 5 then don't show info, have table as a hover
-                if (parseInt(getCookieValue(gate)) == 5) {
+                if (parseInt(getCookieValue(gate)) > 5) {
                     $.get("/truthTables/" + gate + "TT.html", function (data) {
                         $("#gameInfo").html(data);
                     }, 'html');

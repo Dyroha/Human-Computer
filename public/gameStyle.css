@@ -51,8 +51,19 @@
     grid-row: 3;
 }
 
+.ttShow {
+    background-color: cadetblue;
+    text-align: center;
+    transform: translate(20%, 3em);
+    height: 3em;
+    font-size: 1.5em;
+    width: 60%;
+    border: 3px solid black;
+}
+
 .hide {
     display: none;
+    transform: translate(0, 20%);
 }
 
 .ttShow:hover + .hide {
