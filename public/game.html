@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <meta charset="utf-8">
@@ -26,10 +26,17 @@
             var gate = window.location.href.split("?")[1];
             document.title = "Level: " + gate;
 
-            //get gate info from file
-            $.get("/gateInfo/" + gate + "info.html", function (data) {
-                $("#gameInfo").html(data);
-            }, 'html');
+            //if "SPECIFIC_GATE" cookie is > 5 then don't show info, have table as a hover
+            if (parseInt(getCookieValue(gate)) <= 5) {
+                //get gate info from file
+                $.get("/gateInfo/" + gate + "info.html", function (data) {
+                    $("#gameInfo").html(data);
+                }, 'html');
+            } else {
+                $.get("/truthTables/" + gate + "TT.html", function (data) {
+                    $("#gameInfo").html(data);
+                }, 'html');
+            }
 
             //when start button is clicked
             $("#start").click(function () {
@@ -57,11 +64,19 @@
                 //get answer
                 var answer = $(this).attr("data-value") == "true" ? true : false;
                 game.userResponse = answer;
-                console.log(game);
+
                 //send answer
                 if (!postGameResult(game)) {
                     alert("Game being sent to server correctly, contact administrator");
                 }
+
+                //if "SPECIFIC_GATE" cookie gas gotten > 5 then don't show info, have table as a hover
+                if (parseInt(getCookieValue(gate)) == 5) {
+                    $.get("/truthTables/" + gate + "TT.html", function (data) {
+                        $("#gameInfo").html(data);
+                    }, 'html');
+                }
+
                 //generate new game
                 game = generateGame()
 
