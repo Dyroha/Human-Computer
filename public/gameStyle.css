@@ -69,3 +69,9 @@
 .ttShow:hover + .hide {
     display: block;
 }
+
+.count {
+    position: absolute;
+    text-align: center;
+    width: auto;
+}

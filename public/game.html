@@ -38,6 +38,9 @@
                 }, 'html');
             }
 
+            //set count at top of page
+            $(".count").html(getCookieValue(gate) + "/20");
+
             //when start button is clicked
             $("#start").click(function () {
                 //hide start button
@@ -75,6 +78,13 @@
                     $.get("/truthTables/" + gate + "TT.html", function (data) {
                         $("#gameInfo").html(data);
                     }, 'html');
+                }
+
+                if (parseInt(getCookieValue(gate)) > 20) {
+                    $(".count").css("background-color", "#ff9ced");
+                    $(".count").html(getCookieValue(gate) + "/20 You can go back to the home menu whenever you want");
+                } else {
+                    $(".count").html(getCookieValue(gate) + "/20");
                 }
 
                 //generate new game
@@ -141,6 +151,12 @@
             font-size: 2em;
             width: 4em;
         }
+
+        .count {
+            float: right;
+            position: absolute;
+            left: 50%;
+        }
     </style>
 </head>
 
@@ -148,12 +164,13 @@
     <button id="start" class="startButton">Start</button>
     <div id="header">
         <button id="home">Home</button>
+        <div class="count">0/20</div>
     </div>
     <div class="mainWindow">
         <div id="gameInfo"></div>
         <div class="messages"></div>
         <div class="gameArea">
-            <div id="flag1" class="inputL inputFlag flag"></div>
+            <div id="flag1" class="inputL inputFlag flag"> </div>
             <div id="flag2" class="inputR inputFlag flag"></div>
             <div id="answer" class="output flag"></div>
             <div id="flagL" class="response responseL flag" data-value=true>🏴</div>
